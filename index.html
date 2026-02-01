@@ -15,11 +15,10 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffeef8 0%, #ffe4e1 50%, #fff0f5 100%);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* Floating hearts background */
         .hearts {
             position: fixed;
             width: 100%;
@@ -44,7 +43,7 @@
             100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
 
-        .container {
+        .main-container {
             position: relative;
             z-index: 10;
             display: flex;
@@ -57,7 +56,7 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 50px 40px;
@@ -65,8 +64,8 @@
             max-width: 500px;
             width: 90%;
             border: 2px solid rgba(255, 182, 193, 0.3);
-            transform: translateY(0);
-            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 100;
         }
 
         h1 {
@@ -74,7 +73,6 @@
             font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
-            letter-spacing: -1px;
         }
 
         .subtitle {
@@ -124,10 +122,6 @@
             transition: all 0.2s ease;
         }
 
-        .no-btn:hover {
-            background: linear-gradient(135deg, #dee2e6, #ced4da);
-        }
-
         .message {
             display: none;
             margin-top: 30px;
@@ -142,12 +136,6 @@
             color: #d63384;
             margin-bottom: 10px;
             font-size: 1.8em;
-        }
-
-        .message p {
-            color: #555;
-            line-height: 1.6;
-            font-size: 1.1em;
         }
 
         .bear {
@@ -166,19 +154,142 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .date-display {
-            margin-top: 20px;
-            color: #ff6b9d;
+        .gallery-section {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 240, 245, 0.98);
+            z-index: 200;
+            overflow-y: auto;
+            padding: 40px 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #d63384;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .polaroid {
+            background: white;
+            padding: 15px 15px 50px 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            transform: rotate(var(--rotation));
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            background: #f0f0f0;
+            border-radius: 2px;
+        }
+
+        .polaroid-caption {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
             font-weight: 600;
-            font-size: 0.9em;
-            opacity: 0.8;
+            padding: 0 10px;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.1) rotate(0deg) !important;
+            z-index: 100;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+
+        .close-gallery {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 300;
+            display: none;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .close-gallery:hover {
+            transform: scale(1.1);
+            background: #d63384;
+        }
+
+        .view-photos-btn {
+            display: none;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            animation: fadeIn 1s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .view-photos-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .polaroid:nth-child(4n+1) { --rotation: -3deg; }
+        .polaroid:nth-child(4n+2) { --rotation: 2deg; }
+        .polaroid:nth-child(4n+3) { --rotation: -2deg; }
+        .polaroid:nth-child(4n) { --rotation: 3deg; }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .polaroid img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="hearts" id="hearts"></div>
     
-    <div class="container">
+    <div class="main-container" id="mainContainer">
         <div class="card">
             <div class="bear">🧸💝</div>
             <h1>Will you be my Valentine?</h1>
@@ -194,18 +305,55 @@
                 <p>I can't wait to spend Valentine's Day with you. You're the best thing that's ever happened to me. ❤️</p>
                 <p style="margin-top: 15px; font-size: 2em;">🌹🥂✨</p>
             </div>
-            
-            <div class="date-display" id="dateDisplay"></div>
+
+            <button class="view-photos-btn" id="viewPhotosBtn" onclick="showGallery()">
+                📸 View Our 24 Memories Together
+            </button>
+        </div>
+    </div>
+
+    <button class="close-gallery" id="closeBtn" onclick="closeGallery()">×</button>
+    <div class="gallery-section" id="gallerySection">
+        <div class="gallery-header">24 Reasons Why I Love You 💕</div>
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Photos inserted here -->
         </div>
     </div>
 
     <script>
-        // Create floating hearts background
+        // EXACT filenames matching your uploads (case-sensitive!)
+        const photos = [
+            { file: 'photo1.HEIC', caption: 'Our first date 💕' },
+            { file: 'photo2.JPG', caption: 'That smile I love 😍' },
+            { file: 'photo3.HEIC', caption: 'Adventure buddies 🗺️' },
+            { file: 'photo4.HEIC', caption: 'Coffee dates ☕' },
+            { file: 'photo5.HEIC', caption: 'You & Me 🥰' },
+            { file: 'photo6.HEIC', caption: 'Best day ever! 🎉' },
+            { file: 'photo7.HEIC', caption: 'My sunshine ☀️' },
+            { file: 'photo8.jpg', caption: 'Laughing together 😂' },
+            { file: 'photo9.jpg', caption: 'Holding hands 🤝' },
+            { file: 'photo10.jpg', caption: 'Movie night 🎬' },
+            { file: 'photo11.JPG', caption: 'Dinner dates 🍽️' },
+            { file: 'photo12.JPG', caption: 'Park walks 🌳' },
+            { file: 'photo13.HEIC', caption: 'Silly faces 😜' },
+            { file: 'photo14.HEIC', caption: 'My favorite person 💖' },
+            { file: 'photo15.HEIC', caption: 'Us forever 💍' },
+            { file: 'photo16.HEIC', caption: 'Dream team 👫' },
+            { file: 'photo17.HEIC', caption: 'Cuddle time 🥰' },
+            { file: 'photo18.HEIC', caption: 'Your eyes ✨' },
+            { file: 'photo19.HEIC', caption: 'Perfect moment 📸' },
+            { file: 'photo20.jpg', caption: 'My heart ❤️' },
+            { file: 'photo21.jpg', caption: 'Travel buddies ✈️' },
+            { file: 'photo22.jpg', caption: 'Home is you 🏠' },
+            { file: 'photo23.jpg', caption: 'Always yours 💝' },
+            { file: 'photo24.jpg', caption: 'Valentine 2026 💘' }
+        ];
+
         function createHearts() {
             const container = document.getElementById('hearts');
             const heartSymbols = ['💕', '💖', '💗', '💘', '💝', '❤️', '💓'];
             
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 25; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
@@ -216,58 +364,62 @@
             }
         }
 
-        // The fleeing "No" button logic
         function flee() {
             const btn = document.getElementById('noBtn');
-            const container = document.getElementById('buttonContainer');
-            
-            // Get container dimensions
-            const containerRect = container.getBoundingClientRect();
-            const btnRect = btn.getBoundingClientRect();
-            
-            // Calculate max movement range (keep it within the card area)
             const maxX = 300;
             const maxY = 200;
-            
-            // Generate random position that moves away from current position
             const randomX = (Math.random() - 0.5) * maxX * 2;
             const randomY = (Math.random() - 0.5) * maxY * 2;
-            
-            // Apply transform with rotation for fun effect
             btn.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${Math.random() * 360}deg)`;
             btn.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         }
 
-        // Also flee on mouse approach (proximity detection)
         document.addEventListener('mousemove', (e) => {
             const btn = document.getElementById('noBtn');
+            if (!btn || btn.style.display === 'none') return;
             const rect = btn.getBoundingClientRect();
             const x = e.clientX;
             const y = e.clientY;
-            
-            // Calculate distance from cursor to button center
             const btnCenterX = rect.left + rect.width / 2;
             const btnCenterY = rect.top + rect.height / 2;
             const distance = Math.sqrt(Math.pow(x - btnCenterX, 2) + Math.pow(y - btnCenterY, 2));
-            
-            // If cursor is within 100px, flee!
-            if (distance < 100) {
-                flee();
-            }
+            if (distance < 100) flee();
         });
 
-        // Success state
         function sayYes() {
             document.getElementById('successMessage').style.display = 'block';
             document.getElementById('noBtn').style.display = 'none';
+            document.getElementById('viewPhotosBtn').style.display = 'inline-block';
             document.querySelector('.yes-btn').style.transform = 'scale(1.2)';
             document.querySelector('.yes-btn').innerHTML = 'Yay! 💖';
-            
-            // Confetti effect
             createConfetti();
         }
 
-        // Simple confetti celebration
+        function createGallery() {
+            const container = document.getElementById('galleryGrid');
+            photos.forEach((photo, index) => {
+                const polaroid = document.createElement('div');
+                polaroid.className = 'polaroid';
+                polaroid.innerHTML = `
+                    <img src="${photo.file}" alt="Memory ${index + 1}" onerror="this.src='https://via.placeholder.com/200x200/ff6b9d/ffffff?text=Photo+${index+1}'">
+                    <div class="polaroid-caption">${photo.caption}</div>
+                `;
+                container.appendChild(polaroid);
+            });
+        }
+
+        function showGallery() {
+            document.getElementById('gallerySection').style.display = 'block';
+            document.getElementById('closeBtn').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGallery() {
+            document.getElementById('gallerySection').style.display = 'none';
+            document.getElementById('closeBtn').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         function createConfetti() {
             const colors = ['#ff6b9d', '#c44569', '#f8e1e4', '#ffe4e1', '#ffb6c1'];
             for (let i = 0; i < 50; i++) {
@@ -281,24 +433,16 @@
                     confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                     confetti.style.borderRadius = '50%';
                     confetti.style.pointerEvents = 'none';
-                    confetti.style.zIndex = '1000';
+                    confetti.style.zIndex = '999';
                     confetti.style.animation = `float ${Math.random() * 3 + 2}s linear forwards`;
                     document.body.appendChild(confetti);
-                    
                     setTimeout(() => confetti.remove(), 5000);
                 }, i * 50);
             }
         }
 
-        // Set current date
-        document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-
-        // Initialize
         createHearts();
+        createGallery();
     </script>
 </body>
 </html>
