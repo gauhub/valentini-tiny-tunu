@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe4e1 50%, #fff0f5 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts background */
+        .hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 15s infinite linear;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(255, 182, 193, 0.3);
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 60px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            z-index: 20;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+        }
+
+        .no-btn {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            color: #495057;
+            position: absolute;
+            z-index: 30;
+            transition: all 0.2s ease;
+        }
+
+        .no-btn:hover {
+            background: linear-gradient(135deg, #dee2e6, #ced4da);
+        }
+
+        .message {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 240, 245, 0.8);
+            border-radius: 15px;
+            border-left: 4px solid #ff6b9d;
+            animation: fadeIn 1s ease;
+        }
+
+        .message h2 {
+            color: #d63384;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .message p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .bear {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .date-display {
+            margin-top: 20px;
+            color: #ff6b9d;
+            font-weight: 600;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="bear">🧸💝</div>
+            <h1>Will you be my Valentine?</h1>
+            <p class="subtitle">I've been waiting to ask you this...</p>
+            
+            <div class="buttons" id="buttonContainer">
+                <button class="yes-btn" onclick="sayYes()">Yes, of course! 💕</button>
+                <button class="no-btn" id="noBtn" onmouseover="flee()" ontouchstart="flee()">No 😢</button>
+            </div>
+
+            <div class="message" id="successMessage">
+                <h2>You just made me the happiest person! 🎉</h2>
+                <p>I can't wait to spend Valentine's Day with you. You're the best thing that's ever happened to me. ❤️</p>
+                <p style="margin-top: 15px; font-size: 2em;">🌹🥂✨</p>
+            </div>
+            
+            <div class="date-display" id="dateDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts background
+        function createHearts() {
+            const container = document.getElementById('hearts');
+            const heartSymbols = ['💕', '💖', '💗', '💘', '💝', '❤️', '💓'];
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                container.appendChild(heart);
+            }
+        }
+
+        // The fleeing "No" button logic
+        function flee() {
+            const btn = document.getElementById('noBtn');
+            const container = document.getElementById('buttonContainer');
+            
+            // Get container dimensions
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = btn.getBoundingClientRect();
+            
+            // Calculate max movement range (keep it within the card area)
+            const maxX = 300;
+            const maxY = 200;
+            
+            // Generate random position that moves away from current position
+            const randomX = (Math.random() - 0.5) * maxX * 2;
+            const randomY = (Math.random() - 0.5) * maxY * 2;
+            
+            // Apply transform with rotation for fun effect
+            btn.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${Math.random() * 360}deg)`;
+            btn.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        }
+
+        // Also flee on mouse approach (proximity detection)
+        document.addEventListener('mousemove', (e) => {
+            const btn = document.getElementById('noBtn');
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Calculate distance from cursor to button center
+            const btnCenterX = rect.left + rect.width / 2;
+            const btnCenterY = rect.top + rect.height / 2;
+            const distance = Math.sqrt(Math.pow(x - btnCenterX, 2) + Math.pow(y - btnCenterY, 2));
+            
+            // If cursor is within 100px, flee!
+            if (distance < 100) {
+                flee();
+            }
+        });
+
+        // Success state
+        function sayYes() {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('noBtn').style.display = 'none';
+            document.querySelector('.yes-btn').style.transform = 'scale(1.2)';
+            document.querySelector('.yes-btn').innerHTML = 'Yay! 💖';
+            
+            // Confetti effect
+            createConfetti();
+        }
+
+        // Simple confetti celebration
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#c44569', '#f8e1e4', '#ffe4e1', '#ffb6c1'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.animation = `float ${Math.random() * 3 + 2}s linear forwards`;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        // Set current date
+        document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Initialize
+        createHearts();
+    </script>
+</body>
+</html>
